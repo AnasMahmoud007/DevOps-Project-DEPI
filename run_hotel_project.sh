@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- Configuration ---
-SQL_SERVER_IMAGE="hotel-sqlserver-final:latest"
-WEB_APP_IMAGE="hotel-webapp-updated:latest"
+SQL_SERVER_IMAGE="anasmahmoud007/devops-project-depi:hotel-sqlserver-final"
+WEB_APP_IMAGE="anasmahmoud007/devops-project-depi:hotel-webapp-updated"
 SQL_SERVER_CONTAINER_NAME="hotel_db_container"
 WEB_APP_CONTAINER_NAME="hotel_webapp_container"
 DOCKER_NETWORK_NAME="hotel-network"
@@ -54,20 +54,38 @@ echo "--- Starting Hotel Project Setup ---"
 
 # 1. Load Docker Images
 echo "1. Loading Docker images..."
-if ! image_exists "$WEB_APP_IMAGE"; then
-  echo "Loading $WEB_APP_IMAGE from hotel-webapp-updated.tar..."
-  docker load -i hotel-webapp-updated.tar || { echo "Error loading $WEB_APP_IMAGE. Exiting."; exit 1; }
+
+# --- Web App Image ---
+WEB_APP_TAR="hotel-webapp-updated.tar"
+if [ -f "$WEB_APP_TAR" ]; then
+  echo "Loading $WEB_APP_IMAGE from $WEB_APP_TAR..."
+  docker load -i "$WEB_APP_TAR" || { echo "Error loading $WEB_APP_IMAGE from tarball. Exiting."; exit 1; }
 else
-  echo "$WEB_APP_IMAGE already loaded."
+  echo "$WEB_APP_TAR not found."
+  if ! image_exists "$WEB_APP_IMAGE"; then
+    echo "Pulling $WEB_APP_IMAGE from Docker Hub..."
+    docker pull "$WEB_APP_IMAGE" || { echo "Error pulling $WEB_APP_IMAGE from Docker Hub. Exiting."; exit 1; }
+  else
+    echo "$WEB_APP_IMAGE already exists locally."
+  fi
 fi
 
-if ! image_exists "$SQL_SERVER_IMAGE"; then
-  echo "Loading $SQL_SERVER_IMAGE from hotel-sqlserver-final.tar..."
-  docker load -i hotel-sqlserver-final.tar || { echo "Error loading $SQL_SERVER_IMAGE. Exiting."; exit 1; }
+# --- SQL Server Image ---
+SQL_SERVER_TAR="hotel-sqlserver-final.tar"
+if [ -f "$SQL_SERVER_TAR" ]; then
+  echo "Loading $SQL_SERVER_IMAGE from $SQL_SERVER_TAR..."
+  docker load -i "$SQL_SERVER_TAR" || { echo "Error loading $SQL_SERVER_IMAGE from tarball. Exiting."; exit 1; }
 else
-  echo "$SQL_SERVER_IMAGE already loaded."
+  echo "$SQL_SERVER_TAR not found."
+  if ! image_exists "$SQL_SERVER_IMAGE"; then
+    echo "Pulling $SQL_SERVER_IMAGE from Docker Hub..."
+    docker pull "$SQL_SERVER_IMAGE" || { echo "Error pulling $SQL_SERVER_IMAGE from Docker Hub. Exiting."; exit 1; }
+  else
+    echo "$SQL_SERVER_IMAGE already exists locally."
+  fi
 fi
-echo "Docker images loaded."
+
+echo "Docker images are ready."
 
 # 2. Create Docker Network
 echo "2. Creating Docker network '$DOCKER_NETWORK_NAME'..."

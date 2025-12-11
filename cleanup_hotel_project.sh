@@ -3,8 +3,10 @@
 WEB_APP_CONTAINER_NAME="hotel_webapp_container"
 SQL_SERVER_CONTAINER_NAME="hotel_db_container"
 DOCKER_NETWORK_NAME="hotel-network"
-WEB_APP_IMAGE="hotel-webapp-updated:latest"
-SQL_SERVER_IMAGE="hotel-sqlserver-final:latest"
+WEB_APP_IMAGE_DOCKERHUB="anasmahmoud007/devops-project-depi:hotel-webapp-updated"
+SQL_SERVER_IMAGE_DOCKERHUB="anasmahmoud007/devops-project-depi:hotel-sqlserver-final"
+WEB_APP_IMAGE_LOCAL="hotel-webapp-updated:latest"
+SQL_SERVER_IMAGE_LOCAL="hotel-sqlserver-final:latest"
 
 echo "--- Cleaning up Hotel Project Docker resources ---"
 
@@ -21,7 +23,8 @@ echo "Network removed."
 
 # Remove Docker images
 echo "Removing Docker images..."
-docker rmi "$WEB_APP_IMAGE" "$SQL_SERVER_IMAGE" > /dev/null 2>&1
+docker rmi "$WEB_APP_IMAGE_DOCKERHUB" "$SQL_SERVER_IMAGE_DOCKERHUB" > /dev/null 2>&1
+docker rmi "$WEB_APP_IMAGE_LOCAL" "$SQL_SERVER_IMAGE_LOCAL" > /dev/null 2>&1
 echo "Images removed."
 
 echo "--- Hotel Project cleanup complete ---"
